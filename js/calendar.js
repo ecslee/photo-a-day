@@ -68,7 +68,7 @@ function buildMonth(day1, endDate) {
     month += buildWeek(1 - day1, 7 - day1);
 
     var start = 8 - day1;
-    while (start < endDate - 7) {
+    while (start < endDate - 6) {
         month += buildWeek(start, start + 7);
         start += 7;
     }
@@ -130,5 +130,14 @@ function goToMonth(evt) {
     var month = $(evt.target).data('month'),
         year = $(evt.target).data('year'),
         today = new Date();
+
+    if (month === 1) {
+        if (year % 4 === 0) {
+            months[1].days = 29;
+        } else {
+            months[1].days = 28;
+        }
+    }
+
     buildCalendar(new Date(year, month), month === today.getMonth() && year === today.getFullYear());
 }
