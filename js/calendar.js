@@ -95,6 +95,9 @@ function buildNextButton(currMonth, currYear, isToday) {
         nextStr = `${months[nextMonth].abbrev} ${nextYear}`;
 
     var $next = $(`<div class="header-narrow"><button class="nav nav-next" data-month="${nextMonth}" data-year="${nextYear}">${nextStr}</button></div>`);
+    if (isToday) {
+        $next.find('button').attr('disabled', 'disabled');
+    }
     $next.click(goToMonth);
     return $next;
 }
@@ -102,20 +105,19 @@ function buildNextButton(currMonth, currYear, isToday) {
 function buildHeader(currMonth, currYear, isToday) {
     var title = `${months[currMonth].name} ${currYear}`;
     var $header = $(`<div class="header"><div class="header-wide"><h2>${title}</h2></div></div>`);
-    $('.calendar').append($header);
     $header.prepend(buildPrevButton(currMonth, currYear));
     $header.append(buildNextButton(currMonth, currYear, isToday));
     return $header;
 }
 
-function buildCalendar(date) {
-    $('.calendar').append(buildHeader(date.getMonth(), date.getFullYear()));
+function buildCalendar(date, isToday) {
+    $('.calendar').append(buildHeader(date.getMonth(), date.getFullYear(), isToday));
     $('.calendar').append(buildMonth(date.getDay(), months[date.getMonth()].days));
 }
 
 function buildToday() {
     var today = new Date();
-    buildCalendar(new Date(today.getFullYear(), today.getMonth()));
+    buildCalendar(new Date(today.getFullYear(), today.getMonth()), true);
 }
 
 function clearCalendar() {
@@ -126,6 +128,7 @@ function goToMonth(evt) {
     clearCalendar();
 
     var month = $(evt.target).data('month'),
-        year = $(evt.target).data('year');
-    buildCalendar(new Date(year, month));
+        year = $(evt.target).data('year'),
+        today = new Date();
+    buildCalendar(new Date(year, month), month === today.getMonth() && year === today.getFullYear());
 }
