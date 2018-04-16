@@ -9,8 +9,29 @@
         box-sizing: border-box;
     }
 
-    h2 {
-        text-align: right;
+    .header {
+
+        .header-narrow {
+            display: inline-block;
+            width: 15%;
+        }
+
+        .header-wide {
+            display: inline-block;
+            width: 70%;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        button {
+
+            &.nav-next {
+                float: right;
+            }
+        }
+
     }
 
     .month {

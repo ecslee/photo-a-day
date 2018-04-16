@@ -4,4 +4,10 @@ body {
     background-color: $celeste-velato;
 }
 
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
 @import 'calendar';

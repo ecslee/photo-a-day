@@ -1,39 +1,51 @@
 var months = [{
     name: 'January',
-    abrev: 'Jan'
+    abbrev: 'Jan',
+    days: 31
 }, {
     name: 'February',
-    abrev: 'Feb'
+    abbrev: 'Feb',
+    days: 28
 }, {
     name: 'March',
-    abrev: 'Mar'
+    abbrev: 'Mar',
+    days: 31
 }, {
     name: 'April',
-    abrev: 'Apr'
+    abbrev: 'Apr',
+    days: 30
 }, {
     name: 'May',
-    abrev: 'May'
+    abbrev: 'May',
+    days: 31
 }, {
     name: 'June',
-    abrev: 'Jun'
+    abbrev: 'Jun',
+    days: 30
 }, {
     name: 'July',
-    abrev: 'Jul'
+    abbrev: 'Jul',
+    days: 31
 }, {
     name: 'August',
-    abrev: 'Aug'
+    abbrev: 'Aug',
+    days: 31
 }, {
     name: 'September',
-    abrev: 'Sep'
+    abbrev: 'Sep',
+    days: 30
 }, {
     name: 'October',
-    abrev: 'Oct'
+    abbrev: 'Oct',
+    days: 31
 }, {
     name: 'November',
-    abrev: 'Nov'
+    abbrev: 'Nov',
+    days: 30
 }, {
     name: 'December',
-    abrev: 'Dec'
+    abbrev: 'Dec',
+    days: 31
 }];
 
 function buildWeek(startDate, endDate) {
@@ -42,7 +54,7 @@ function buildWeek(startDate, endDate) {
         if (startDate + i > 0 && startDate + i <= endDate) {
             week += `<div class="day" data-date="${startDate + i}">${startDate + i}</div>`;
         } else {
-            week += '<div class="day wrongMonth"></div>';
+            week += '<div class="day wrong-month"></div>';
         }
     }
 
@@ -67,10 +79,53 @@ function buildMonth(day1, endDate) {
     return month + '</div>';
 }
 
-function buildCalendar() {
-    var today = new Date();
-    $('.calendar').append(`<h2>${months[today.getMonth()].name} ${today.getFullYear()}</h2>`);
+function buildPrevButton(currMonth, currYear) {
+    var prevMonth = currMonth === 0 ? 11 : currMonth - 1,
+        prevYear = prevMonth === 11 ? currYear - 1 : currYear,
+        prevStr = `${months[prevMonth].abbrev} ${prevYear}`;
 
-    var day1 = ((today.getDate() - 1) % 7) - today.getDay();
-    $('.calendar').append(buildMonth(day1, 30));
+    var $prev = $(`<div class="header-narrow"><button class="nav nav-prev" data-month="${prevMonth}" data-year="${prevYear}">${prevStr}</button></div>`);
+    $prev.click(goToMonth);
+    return $prev;
+}
+
+function buildNextButton(currMonth, currYear, isToday) {
+    var nextMonth = currMonth === 11 ? 0 : currMonth + 1,
+        nextYear = nextMonth === 0 ? currYear + 1 : currYear,
+        nextStr = `${months[nextMonth].abbrev} ${nextYear}`;
+
+    var $next = $(`<div class="header-narrow"><button class="nav nav-next" data-month="${nextMonth}" data-year="${nextYear}">${nextStr}</button></div>`);
+    $next.click(goToMonth);
+    return $next;
+}
+
+function buildHeader(currMonth, currYear, isToday) {
+    var title = `${months[currMonth].name} ${currYear}`;
+    var $header = $(`<div class="header"><div class="header-wide"><h2>${title}</h2></div></div>`);
+    $('.calendar').append($header);
+    $header.prepend(buildPrevButton(currMonth, currYear));
+    $header.append(buildNextButton(currMonth, currYear, isToday));
+    return $header;
+}
+
+function buildCalendar(date) {
+    $('.calendar').append(buildHeader(date.getMonth(), date.getFullYear()));
+    $('.calendar').append(buildMonth(date.getDay(), months[date.getMonth()].days));
+}
+
+function buildToday() {
+    var today = new Date();
+    buildCalendar(new Date(today.getFullYear(), today.getMonth()));
+}
+
+function clearCalendar() {
+    $('.calendar').empty();
+}
+
+function goToMonth(evt) {
+    clearCalendar();
+
+    var month = $(evt.target).data('month'),
+        year = $(evt.target).data('year');
+    buildCalendar(new Date(year, month));
 }
